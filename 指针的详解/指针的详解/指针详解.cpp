@@ -1,5 +1,7 @@
-#define _CRT_SECUER_NO_WARNINGS 1
+#define _CRT_SECURE_NO_WARNINGS 1
 #include <stdio.h>
+#include <stdlib.h>
+#include <search.h>
 //一：回忆指针内容
 //1.指针的大小是4或8个字节，在32位机器或64位机器下
 //void test(int arr[])
@@ -339,7 +341,7 @@
 //int main()
 //{
 //	void (*p)(const char*) = &print;
-//	(*p)("I LOVE YOU");
+//	p("I LOVE YOU");*是没有意义的
 //
 //	return 0;
 //}
@@ -420,24 +422,381 @@
 //char*(*pfArr[4])(char*,const char*)
 //
 
+//函数指针数组的使用案例
+//void menu()
+//{
+//	printf("####################\n");
+//	printf("### 1.add  2.sub#####\n");
+//	printf("### 3.mul  4.div#####\n");
+//	printf("##### 0.exit ########\n");
+//	printf("#####################\n");
+//}
+//int add(int x, int y)
+//{
+//	return x + y;
+//}
+//int sub(int x, int y)
+//{
+//	return x - y;
+//}
+//int mul(int x, int y)
+//{
+//	return x * y;
+//}
+//int div(int x, int y)
+//{
+//	return x / y;
+//}
+//int main()
+//{ 
+//	int input = 0;
+//	int x = 0;
+//	int y = 0;
+//	do
+//	{
+//		menu();
+//		printf("请选择:>\n");
+//		scanf("%d", &input);
+//		 
+//		switch (input)
+//		{
+//		case 1:
+//			printf("请输入两个操作数:>\n");
+//			scanf("%d %d", &x, &y); 
+//			printf("%d\n", add(x, y));	 
+//			break;
+//		case 2:
+//			printf("请输入两个操作数:>\n");
+//			scanf("%d %d", &x, &y);
+//			printf("%d\n", sub(x, y));
+//			break;
+//		case 3:
+//			printf("请输入两个操作数:>\n");
+//			scanf("%d %d", &x, &y);
+//			printf("%d\n", mul(x, y));
+//			break;
+//		case 4:
+//			printf("请输入两个操作数:>\n");
+//			scanf("%d %d", &x, &y);
+//			printf("%d\n", div(x, y));
+//			break;
+//		case 0:	
+//			printf("退出程序\n");
+//			break;
+//		default:
+//			printf("选择错误,重新选择\n");
+//			break;
+//		}
+//	} while (input);
+//	return 0;
+//}
 
+//##如果实现功能较多时，使用case语句就会比较繁杂，所以我们可以这样改造
+// void menu()
+//{
+//printf("####################\n");
+//printf("### 1.add  2.sub#####\n");
+//printf("### 3.mul  4.div#####\n");
+//printf("##### 0.exit ########\n");
+//printf("#####################\n");
+//}
+//int add(int x, int y)
+//{
+//	return x + y;
+//}
+//int sub(int x, int y)
+//{
+//	return x - y;
+//}
+//int mul(int x, int y)
+//{
+//	return x * y;
+//}
+//int div(int x, int y)
+//{
+//	return x / y;
+//}
+//int main()
+//{
+//	int input = 0;
+//	int x = 0;
+//	int y = 0;
+//	do
+//	{
+//		menu();
+//		printf("请选择:>\n");
+//		scanf("%d", &input);
+//		if (input >= 1 && input <= 4)
+//		{
+//			printf("请输入两个操作数:>");
+//			scanf("%d %d", &x, &y);
+//			int(*parr[])(int, int) = { 0,add,sub,mul,div };
+//			//经常把函数指针数组叫做转移表
+//			printf("%d\n", parr[input](x, y));
+//		}
+//		else if (input == 0)
+//		{
+//			printf("退出程序\n");
+//		}
+//		else
+//		{
+//			printf("选择错误,请重新选择\n");
+//		}
+//	} while (input);
+//	return 0;
+//}
 
+//七：指向函数指针数组的指针
+//int add(int x, int y)
+//{
+//	return x + y;
+//}
+//int main()
+//{
+//	int arr[10] = { 0 };
+//	int(*p)[10] = &arr;//将数组名拿起来，换成指针，就变成数组指针
+//
+//	int(*pfarr[4])(int, int);//pfarr是一个函数指针数组
+//	int(*(*ppfarr)[4])(int, int) = &pfarr;//道理相同，将数组名换成指针，变为指向函数指针数组的指针
+//	//ppfarr是一个数组指针，指针指向的数组有4个元素，每个元素是函数指针int(*)(int ,int )
+//	//去掉*p和*p指向的方块儿，剩下的就是指向的数组的元素类型
+//	return 0;
+//}
 
+//总结：想要写出指向函数指针数组的指针，其实只要将数组名替换为（指针）即可
 
+//八：5个概念的辨析
+//int Add(int x, int y)
+//{
+//	return x + y;
+//}
+//int main()
+//{
+//	int* arr[10] = { NULL };
+//	//指针数组
+//	int* (*p)[10] = &arr;
+//	//数组指针 数组指针p指向的数组元素都是int*
+//	int(*pf)(int, int) = Add;
+//	//函数指针 函数指针p指向的函数参数类型为两个int，函数返回类型为int
+//	int(*pa[])(int, int) = { Add };
+//	//函数指针数组 去掉数组名跟方块儿，剩下的就是数组元素类型，类型为函数指针
+//	int(*(*parr)[])(int, int) = &pa;
+//	//指向函数指针数组的指针 parr指向的数组大小为[],元素类型为函数指针
+//	return 0;
+//}
 
+//九：回调函数（通过函数指针调用的函数）
+//上述通过Calc函数接收回调函数地址，再利用地址访问回调函数，通过此种方法可以实现多种
+//函数功能用一个函数来实现
 
+//上面代码scanf和printf函数多次在case语句中出现，发生冗余多次的问题，那么我们便可以封装一个函数
+//来实现case中的功能
+//void menu()
+//{
+//	printf("####################\n");
+//	printf("### 1.add  2.sub#####\n");
+//	printf("### 3.mul  4.div#####\n");
+//	printf("##### 0.exit ########\n");
+//	printf("#####################\n");
+//}
+//int add(int x, int y)
+//{
+//	return x + y;
+//}
+//int sub(int x, int y)
+//{
+//	return x - y;
+//}
+//int mul(int x, int y)
+//{
+//	return x * y;
+//}
+//int div(int x, int y)
+//{
+//	return x / y;
+//}
+//void Calc(int(*pf)(int, int))
+//{
+//	int x = 0;
+//	int y = 0;
+//	printf("请输入两个操作数:>\n");
+//	scanf("%d %d", &x, &y);
+//	printf("%d\n", pf(x, y));
+//}
+//int main()
+//{
+//	int input = 0;
+//	int x = 0;
+//	int y = 0;
+//	do
+//	{
+//		menu();
+//		printf("请选择:>\n");
+//		scanf("%d", &input);
+//
+//		switch (input)
+//		{
+//		case 1:
+//			Calc(add);
+//			break;
+//		case 2:
+//			Calc(sub);
+//			break;
+//		case 3:
+//			Calc(mul);
+//			break;
+//		case 4:
+//			Calc(div);
+//			break;
+//		case 0:
+//			printf("退出程序\n");
+//			break;
+//		default:
+//			printf("选择错误,重新选择\n");
+//			break;
+//		}
+//	} while (input);
+//	return 0;
+//}
 
+//回调函数举例二：
+//void print( const char* str)
+//{
+//	printf("%s\n", str);
+//}
+//void test(void(*p)( const char*))
+//{
+//	p("I LOVE YOU");//将字符串首字符地址传过去了
+//}
+//int main()
+//{
+//	test(print);
+//	return 0;
+//}
+//print函数并未主动进行调用，而是通过test函数接收指向print函数的地址，并通过指向print函数的指针
+//进行调用print函数。
+//这种机制被称为函数回调的机制，print函数被称为回调函数
 
+//回调函数的真正使用场景：
+//qsort - 可以排序任意类型的数据
+//int main()
+//{
+//	int a = 10;
+//	int* pa = &a;
+//
+//	void* pf = &a;//无类型指针
+//	//void* 类型的指针 可以接收任意类型的地址
+//	//void*类型指针是不可以进行解引用的，因为无法确定解引用时能够访问几个字节
+//	//void*类型指针不能进行+-整数的操作
+//	//但我们可以通过强制类型转换的方式，继续上面的操作
+//	return 0;
+//}
 
+//自己实现冒泡排序函数：
+void Swap(char* buf1, char* buf2, int width)
+{
+	int i = 0;
+	for (i = 0; i < width; i++)
+	{
+		char tmp = *buf1;
+		*buf1 = *buf2;
+		*buf2 = tmp;
+		buf1++;
+		buf2++;
+	}
+}
+void bubble_sort(void* base, int sz, int width, int(*cmp)(void* e1, void* e2))
+{
+	//比较的时候不知道元素类型，所以cmp指针指向的函数的参数类型是void* void*
+	int i = 0;
+	//冒泡排序的趟数
+	for (i = 0; i < sz - 1; i++)
+	{
+		//每一趟比较的对数
+		int j = 0;
+		for (j = 0; j < sz - 1 - i; j++)
+		{
+			//两个元素的比较
+			if (cmp((char*)base + j * width, (char*)base + (j + 1) * width) > 0)
+			//回调函数cmp时，返回值大于0，则进行元素交换
+			{
+				//交换元素
+				Swap((char*)base + j * width, (char*)base + (j + 1) * width, width);
+			}
+		}
+	}
+}
+struct stu
+{
+	char name[20];
+	int age;
+};
 
+void print1(int arr[], int sz)
+{
+	int i = 0;
+	for (i = 0; i < sz; i++)
+	{
+		printf("%d ", arr[i]);
+	}
+}
+void print2(float f[], int sz)
+{
+	int i = 0;
+	for (i = 0; i < sz; i++)
+	{
+		printf("%f ", f[i]);
+	}
+}
 
+int cmp_int( void* elem1,  void* elem2)
+{
+	return *(int*)elem1 - *(int*)elem2;//返回值大于0，就进行交换
+}
+int cmp_float( void* elem1, void* elem2)
+{
+	return ((int)(*(int*)elem1 - *(int*)elem2));
+}
+int cmp_stu_by_age( void* elem1,  void* elem2)
+{
+	return ((struct stu*)elem1)->age - ((struct stu*)elem2)->age;
+}
+void test1()
+{
+	int arr[10] = { 9,8,7,6,5,4,3,2,1,0 };
+	int sz = sizeof(arr) / sizeof(arr[0]);
+	bubble_sort(arr, sz, 4, cmp_int);
+	print1(arr, sz);
+}
+void test2()
+{
+	float f[] = { 9.0,8.0,7.0,6.0 };
+	int sz = sizeof(f) / sizeof(f[0]);
+	bubble_sort (f, sz, 4, cmp_float);
+	print2(f, sz);
+}
+void test3()
+{
+	struct stu s[3] = { {"zhangsan",20},{"lisi",30},{"wangwu",40} };
+	int sz = sizeof(s) / sizeof(s[0]);
+	bubble_sort(s, sz, sizeof(s[0]), cmp_stu_by_age);
+	
+}
+int main()
+{
+	test1();
+	printf("\n");	
+	test2();
+	test3();
+	return 0;
+}
 
-
-
-
-
-
-
+//qsort函数
+//第一个参数：待排序的首元素的地址
+//第二个参数：待排序数组的元素个数
+//第三个参数：待排序的数组每个元素的大小-单位是字节
+//第四个参数：是函数指针，接收的是要比较两个元素的函数的地址（这个函数使用者自己实现）
+//            函数指针指向的函数的两个参数是待比较的两个元素的地址
 
 
 
