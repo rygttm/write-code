@@ -1,0 +1,4 @@
+﻿  字符串+内存函数的介绍.cpp
+D:\c语言进阶学习\字符串+内存函数的介绍\字符串+内存函数的介绍\字符串+内存函数的介绍.cpp(379,19): error C2664: “char *strcpy(char *,const char *)”: 无法将参数 1 从“int [5]”转换为“char *”
+D:\c语言进阶学习\字符串+内存函数的介绍\字符串+内存函数的介绍\字符串+内存函数的介绍.cpp(379,9): message : 指向的类型不相关; 转换需要 reinterpret_cast、C 样式强制转换或带圆括号的函数样式强制转换
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt\string.h(130,1): message : 参见“strcpy”的声明
